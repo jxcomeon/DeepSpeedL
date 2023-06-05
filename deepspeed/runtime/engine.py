@@ -1601,8 +1601,10 @@ class DeepSpeedEngine(Module):
             deepspeed_io_timer = self.tput_timer
 
         # If mpu is provided, forward world size and parallel rank to sampler.
-        data_parallel_world_size = self.dp_world_size
-        data_parallel_rank = self.global_rank
+        # data_parallel_world_size = self.dp_world_size
+        # data_parallel_rank = self.global_rank
+        data_parallel_world_size = None
+        data_parallel_rank = None
         if self.mpu is not None:
             data_parallel_world_size = self.mpu.get_data_parallel_world_size()
             data_parallel_rank = self.mpu.get_data_parallel_rank()
@@ -1615,16 +1617,16 @@ class DeepSpeedEngine(Module):
                 shuffle=False,
             )
 
-        deepspeed_dataloader_config = {}
-        if self.curriculum_learning_enabled():
-            deepspeed_dataloader_config = {
-                CURRICULUM_LEARNING: self.curriculum_learning_enabled(),
-                DATA_EFFICIENCY: self.data_efficiency_config(),
-                DATA_PARALLEL_GROUP: self.data_parallel_group,
-                GRADIENT_ACCUMULATION_STEPS: self.gradient_accumulation_steps(),
-                GLOBAL_RANK: self.global_rank,
-                DATA_SAMPLING_NUM_WORKERS: self.data_sampling_config()[DATA_SAMPLING_NUM_WORKERS]
-            }
+        # deepspeed_dataloader_config = {}
+        # if self.curriculum_learning_enabled():
+        #     deepspeed_dataloader_config = {
+        #         CURRICULUM_LEARNING: self.curriculum_learning_enabled(),
+        #         DATA_EFFICIENCY: self.data_efficiency_config(),
+        #         DATA_PARALLEL_GROUP: self.data_parallel_group,
+        #         GRADIENT_ACCUMULATION_STEPS: self.gradient_accumulation_steps(),
+        #         GLOBAL_RANK: self.global_rank,
+        #         DATA_SAMPLING_NUM_WORKERS: self.data_sampling_config()[DATA_SAMPLING_NUM_WORKERS]
+        #     }
 
         return DeepSpeedDataLoader(dataset=dataset,
                                    batch_size=batch_size,
@@ -1636,8 +1638,8 @@ class DeepSpeedEngine(Module):
                                    data_sampler=data_sampler,
                                    data_parallel_world_size=data_parallel_world_size,
                                    data_parallel_rank=data_parallel_rank,
-                                   dataloader_drop_last=self.dataloader_drop_last(),
-                                   deepspeed_dataloader_config=deepspeed_dataloader_config)
+                                   dataloader_drop_last=self.dataloader_drop_last())
+                                   # deepspeed_dataloader_config=deepspeed_dataloader_config
 
     def train(self, mode=True):
         r""""""
