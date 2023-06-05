@@ -30,6 +30,8 @@ from deepspeed import comm as dist
 from deepspeed.utils import log_dist
 from deepspeed.utils.exceptions import DeprecatedException
 
+from torchdistpackage import tpc
+
 # Expert parallel group that the current rank belongs to.
 _EXPERT_PARALLEL_GROUP = {}
 # Expert data parallel group that the current rank belongs to.
@@ -328,7 +330,7 @@ def _get_data_parallel_group():
 
 
 def _get_broadcast_src_rank():
-    return dist.get_global_rank(_get_data_parallel_group(), 0)
+    return tpc.get_ranks_in_group('data')[0]
 
 
 def _get_expert_broadcast_src_rank(group_name):
